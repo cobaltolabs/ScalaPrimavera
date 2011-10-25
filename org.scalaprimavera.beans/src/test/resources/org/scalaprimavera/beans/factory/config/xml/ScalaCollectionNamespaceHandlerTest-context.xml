@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2009 - 2011 Cobalto Labs SAS
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sp-collections="http://www.scalaprimavera.org/schema/sp-collections"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.scalaprimavera.org/schema/sp-collections
+           http://www.scalaprimavera.org/schema/collections/sp-collections-1.0.xsd">
+    <sp-collections:list id="scalaStringsList" value-type="java.lang.String">
+        <value>foo</value>
+        <value>bar</value>
+    </sp-collections:list>
+    <sp-collections:list id="scalaIntList" value-type="java.lang.Integer">
+        <value>123</value>
+        <value>456</value>
+    </sp-collections:list>
+    <sp-collections:map id="stringStringMap" key-type="java.lang.String" value-type="java.lang.String">
+        <entry key="foo" value="bar"/>
+    </sp-collections:map>
+    <sp-collections:map id="stringIntMap" key-type="java.lang.String" value-type="java.lang.Integer">
+        <entry key="foo" value="123"/>
+        <entry key="bar" value="456"/>
+    </sp-collections:map>
+</beans>

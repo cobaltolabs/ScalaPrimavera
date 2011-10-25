@@ -1,0 +1,44 @@
+springVersion = '3.0.6.RELEASE'
+springFramework = 'org.springframework'
+scalaVersion = '2.9.1'
+slf4j = "org.slf4j"
+
+dependencies {
+
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        scalaTools "org.scala-lang:scala-compiler:$scalaVersion"
+        scalaTools "org.scala-lang:scala-library:$scalaVersion"
+
+        compile("$springFramework:spring-core:$springVersion") {
+            exclude group: "commons-logging"
+        }
+
+        compile(
+                "org.scala-lang:scala-library:$scalaVersion",
+                "$springFramework:spring-jdbc:$springVersion",
+                "$slf4j:jcl-over-slf4j:1.6.2",
+                "$slf4j:slf4j-api:1.6.2"
+        )
+        testCompile(
+                [group: 'org.testng', name: 'testng', version: '6.2.1'],
+                [group: springFramework, name: 'spring-test', version: springVersion],
+                [group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.30'],
+                [group: 'org.scalatest',name:'scalatest_2.9.1',version:'1.6.1'],
+                [group: 'org.hsqldb',name:'hsqldb-j5',version:'2.2.4']
+        )
+    }
+
+    test {
+        useTestNG()
+    }
+
+}
+
+task sourceJar(type:Jar,dependesOn:classes){
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}

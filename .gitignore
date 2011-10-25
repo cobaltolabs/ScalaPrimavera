@@ -5,3 +5,5 @@ ScalaPrimavera.iws
 *.class
 build/*
 */build/*
+*.log
+*/out/*
