@@ -372,12 +372,6 @@ We develop succesful projects using Spring and Scala, and we know that huge impa
 
 ScalaPrimavera was developed as our internal library, now we are sharing this with the development community with an open source license (Apache 2.0)
 
-### Are you planning to make money with this? ###
-
-Of course, we're a company that are in the business of making money with software.
-
-In the future we'll sell professional services based on ScalaPrimavera but in a way that don't f*** the users.
-
 ### Do you have a roadmap? ###
 
 Not a detailed one, but we have broad plan in mind:
