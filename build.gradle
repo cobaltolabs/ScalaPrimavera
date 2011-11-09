@@ -33,7 +33,7 @@ allprojects {
     apply plugin: 'scala'
     sourceCompatibility = 1.6
     group = 'org.scalaprimavera'
-    version = '0.1_291_306'
+    version = '0.1.5_291_306'
     task writePom <<{
         //dependencies = project.dependencies
         pom{}.writeTo("$projectDir/pom.xml")

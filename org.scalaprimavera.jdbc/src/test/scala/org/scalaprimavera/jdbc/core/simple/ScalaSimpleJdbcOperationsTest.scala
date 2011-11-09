@@ -27,6 +27,7 @@ import collection.immutable.Map
 import org.scalaprimavera.jdbc.TestBean
 import java.sql.ResultSet
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import org.scalaprimavera.jdbc.TestJdbcHelper._
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,33 +41,7 @@ class ScalaSimpleJdbcOperationsTest extends AbstractTransactionalTestNGSpringCon
   @Autowired
   var template: ScalaSimpleJdbcOperations = _
 
-  val selectIdWithNamedParams = "select id from test_bean where description = :description"
-  val selectId = "select id from test_bean where description = ?"
-  val selectDescriptionWithNamedParams = "select description from test_bean where id = :id"
-  val selectDescription = "select description from test_bean where id = ?"
-  val select = "select * from test_bean"
-  val selectLessThan = select + " where id < :id"
-  val whereNamedId = " where id = :id"
-  val selectWithNamedParams = select + whereNamedId
-  val whereId = " where id = ?"
-  val selectObject = select + whereId
-  val insertWithNamedParams = "insert into test_bean(description) values (:description)"
-  val insert = "insert into test_bean(description) values (?)"
-  val selectCount = "select count(id) from test_bean"
-  val delete = "delete from test_bean "
-  val deleteWithNamedParams = delete + whereNamedId
-  val deleteObject = delete + whereId
 
-
-  val mapperFunction = (rs: ResultSet, i: Int) => {
-    import rs._
-    val bean = new TestBean
-    import bean._
-    id = getInt("id")
-    description = getString("description")
-    createDate = getDate("create_date")
-    bean
-  }
 
   @Test
   def testGetOperations() {
@@ -289,7 +264,7 @@ class ScalaSimpleJdbcOperationsTest extends AbstractTransactionalTestNGSpringCon
     template.queryForList(select) should have size 5
   }
 
-  def checkCount(count: Int) {
+  private def checkCount(count: Int) {
     template.queryForInt(selectCount) should be(count)
   }
 

@@ -16,6 +16,8 @@
 
 package org.scalaprimavera.jdbc.core.simple.dsl
 
+import java.sql.ResultSet
+
 /**
  * Created by IntelliJ IDEA.
  * User: mario
@@ -23,6 +25,9 @@ package org.scalaprimavera.jdbc.core.simple.dsl
  * Time: 22:54
  */
 
-trait MappedWithToken {
+trait MappedWithToken[T] {
 
+  def as(requiredType:Class[T]):T
+
+  def mappedWith(mapper: (ResultSet, Int) => T): T
 }

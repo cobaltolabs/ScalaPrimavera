@@ -1,4 +1,8 @@
-## Documentation Ver 0.1 ##
+## Documentation Ver 0.1.5 ##
+
+### Changes on Ver 0.1.5 ###
+
+* `org.scalaprimavera.jdbc.simple.dsl.DSLJdbcTemplate` is template that expose a clean fluent interface to make JDBC Operations
 
 ### Changes on Ver 0.1 ###
 
@@ -10,7 +14,7 @@
 
 #### Maven Repositories ####
 
-The jars will be uploaded to Maven repositories in the next few weeks. You can download the distribution here [here](http://www.cobaltolabs.com/index.php/productos/scalaprimavera/)
+The jars will be uploaded to Maven repositories in the next few weeks. You can download the distribution [here](http://www.cobaltolabs.com/index.php/productos/scalaprimavera/)
 
 #### Jar Names ####
 
@@ -136,7 +140,8 @@ Right now we're only supporting this two collections, if you want support for ot
 
 #### Introduction ####
 
-This modules offer support for using `SimpleJdbcTemplate` inside Scala. Support for other classes will come in next releases
+This modules offer support for using `SimpleJdbcTemplate` inside Scala. Also offer a new class `DSLJdbcTemplate` that expose a clean fluent interface
+Support for other classes will come in next releases
 
 #### ScalaSimpleJdbcTemplate ####
 
@@ -280,7 +285,7 @@ val mapperFunction = (set: ResultSet, i: Int) => {
 val users:List[User] = template.query("select * from users where",mapperFunction)
 ```
 
-Sometimes in complex queries the return type don't match any Entity of your domain. In thos cases you can use `queryForMap`
+Sometimes in complex queries the return type don't match any Entity of your domain. In those cases you can use `queryForMap`
 
 ```scala
 val user = template.queryForMap("select firs_name, age as years from users where id = ?",4567)
@@ -353,6 +358,126 @@ template.batchUpdate("insert into users(first_name,last_name,age) values(?,?,?)"
         Seq("Mike", "Foo", 24)),
         Seq.empty)
 ```
+
+#### DSLJdbcTemplate ####
+
+`org.scalaprimavera.jdbc.core.simple.dsl.DSLJdbcTemplate` is a class that offers a clean fluent interface to make JDBC Operations
+
+##### Creating a DSLJdbcTemplate #####
+
+In order to create a `DSLJdbcTemplate` you need to inject a bean of type `ScalaSimpleJdbcTemplate`
+
+In the next example we'll add an anonymous bean:
+
+```xml
+<bean id="template" class="org.scalaprimavera.jdbc.core.simple.dsl.DSLJdbcTemplate">
+    <constructor-arg>
+        <bean class="org.scalaprimavera.jdbc.core.simple.ScalaSimpleJdbcTemplate">
+            <constructor-arg>
+                <bean class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
+                    <constructor-arg type="javax.sql.DataSource" ref="dataSource"/>
+                </bean>
+            </constructor-arg>
+        </bean>
+    </constructor-arg>
+</bean>
+```
+
+##### Querying a Int/Long #####
+
+To make a query that returns an Int/Long you must use the method `queryForInt` to `Int` or `queryForLong` to `Long`. Ex:
+
+
+```scala
+val count = template.queryForInt("select count(id) from users where age > :age")
+                    .paramaters("age" -> 18)
+```
+
+You can also use infix notation
+
+```scala
+val count = template queryForInt "select count(id) from users where age > :age" paramaters "age" -> 18
+```
+
+If you need to add more parameters
+
+```scala
+val count = template queryForInt "select count(id) from users where age > :age and first_name = :name" parameters("id" -> 18,"name" -> "John")
+```
+
+'DSLJdbcTemplate' also offer functions that return `Option` like `ScalaSimpleJdbcTemplate`
+
+##### Querying more complex objects #####
+
+If we want to retrieve a `String` we can use the `queryForObject` function
+
+```scala
+val firstName = template queryForObject "select first_name from users where id = :id" parameters "id" -> 4567 as classOf[String]
+```
+
+The most common case is to extract an entity for our domain/model
+
+```scala
+val user = template queryForObject "select * from users where id = :id" parameters "id" -> 4567 mappedWith {
+        (set, i) => {
+            new User(set.getInt("id"),set.getString("first_name"),set.getString("last_name"),set.getInt("age"))
+        }
+    }
+```
+
+If you want to reuse the `mappedWith` argument function, you can declare it as a `val`
+
+```scala
+val mapperFunction = (set: ResultSet, i: Int) => {
+    new User(set.getInt("id"), set.getString("first_name"), set.getString("last_name"), set.getInt("age"))
+}
+
+val user = template queryForObject "select * from users where id = :id" parameters "id" -> 4567 mappedWith mapperFunction
+```
+
+If you want to retrieve a `List[T]` you can use the function `query`
+
+Sometimes in complex queries the return type don't match any Entity of your domain. In those cases you can use `queryForMap`
+
+```scala
+val user = template queryForMap "select firs_name, age as years from users where id = :id" parameters "id" -> 4567
+
+println(user("FIRST_NAME") + " is " + user("YEARS") + " years old")
+```
+
+`queryForMap` will return a `Map[String,Any]` where the key is the column name
+
+For returning more than one value you can use `queryForList` that will return a `List[Map[String,Any]]`
+
+
+##### Manipulating data #####
+
+For operations like update, delete, insert and others you can use the function `update`
+
+
+```scala
+template.update "insert into users(first_name,last_name,age) values(:name,:lastName,:age)" parameters("name" -> "John","lastName" -> "Doe", "age" -> 24)
+```
+
+Also you can use an instance of your's model class (Very useful on most MVC applications)
+
+```scala
+val user = new User("John", "Doe", 18)
+
+template.update "insert into users(first_name,last_name,age) values(:firstName,:lastName,:age)" withThis user
+```
+In this case your model class need to have properties with the same name as the query parameters. In this example the 'User' class need to have properties with the name `firstName`, `lastName` and `age`; and, of course, this properties need to have a type that could be converted to SQL types
+
+This functions will return an `Int` with the count of modified rows
+
+##### Fallback #####
+
+If the functions that offer `DSLJdbcTemplate` aren't enough for your needs, you always could fallback to `ScalaSimpleJdbcTemplate` with the method `noDSL`
+
+```scala
+val count = template.noDSL.queryForInt("select count(id) from users")
+```
+
 
 ## FAQ ##
 

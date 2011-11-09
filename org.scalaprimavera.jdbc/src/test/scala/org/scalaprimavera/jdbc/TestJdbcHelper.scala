@@ -17,7 +17,6 @@ package org.scalaprimavera.jdbc
  */
 
 import java.sql.ResultSet
-import org.scalaprimavera.jdbc.TestBean
 
 /**
  * Created by IntelliJ IDEA.

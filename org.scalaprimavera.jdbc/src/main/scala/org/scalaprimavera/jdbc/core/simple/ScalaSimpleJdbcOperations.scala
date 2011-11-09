@@ -149,12 +149,10 @@ trait ScalaSimpleJdbcOperations {
   def update(sql: String, args: Any*): Int
 
   @throws(classOf[DataAccessException])
-  def batchUpdate(sql:String,args:Seq[_ <: SqlParameterSource]):Seq[Int]
+  def batchUpdate(sql: String, args: Seq[_ <: SqlParameterSource]): Seq[Int]
 
   @throws(classOf[DataAccessException])
-  def batchUpdate(sql:String,args:Seq[Seq[Any]],types:Seq[Int]):Seq[Int]
-
-
+  def batchUpdate(sql: String, args: Seq[Seq[Any]], types: Seq[Int]): Seq[Int]
 
 
 }
